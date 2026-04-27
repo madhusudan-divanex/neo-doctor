@@ -159,7 +159,7 @@ function DoctorProfileEditRequest() {
                                         <div className="col-lg-6 col-md-6 col-sm-12  mb-3">
                                             <div className="add-patients-clients premium-crd-details" >
                                                
-                                                <img src="/nw-card.png" alt="" />
+                                                <img src="/DoctorNeoCard.png" alt="" />
                                                 <div className="patient-card-details">
                                                     <h4 className="text-white">{profiles?.name?.length > 13 ? profiles?.name?.slice(0, 13) :
                                                         profiles?.name}</h4>

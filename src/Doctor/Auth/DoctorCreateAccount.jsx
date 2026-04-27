@@ -164,7 +164,8 @@ function DoctorCreateAccount() {
                                     <div className="custom-frm-bx">
                                         <div className="custom-frm-bx mb-0">
                                             <label htmlFor="">Date of Birth</label>
-                                            <input type="date" name="dob" value={formData?.dob} onChange={handleChange} className="form-control new-control-frm ps-5" placeholder="Enter Email Address" />
+                                            <input type="date" name="dob" value={formData?.dob} onChange={handleChange}
+                                            max={new Date().toISOString().split("T")[0]} className="form-control new-control-frm ps-5" placeholder="Enter Email Address" />
                                             <div className="contact-add-icon">
                                                 <span className="nw-contact-icon"> <FontAwesomeIcon icon={faCalendar} /> </span>
                                             </div>

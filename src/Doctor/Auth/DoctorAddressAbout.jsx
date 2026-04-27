@@ -8,6 +8,7 @@ import {
     faHospital,
     faLanguage,
     faLocationDot,
+    faRupeeSign,
     faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -383,10 +384,10 @@ function DoctorAddressAbout() {
                                         <div className="custom-frm-bx">
                                             <div className="custom-frm-bx mb-0">
 
-                                                <label htmlFor="">Fees($)</label>
+                                                <label htmlFor="">Fees(₹)</label>
                                                 <input type="number" name="fees" value={formData?.fees} onChange={handleChange} className="form-control new-control-frm px-5" placeholder="Enter Fees" />
                                                 <div className="contact-add-icon">
-                                                    <span className="nw-contact-icon"> <FontAwesomeIcon icon={faDollarSign} /> </span>
+                                                    <span className="nw-contact-icon"> <FontAwesomeIcon icon={faRupeeSign} /> </span>
                                                 </div>
                                             </div>
                                             {errors.fees && <small className="text-danger">{errors.fees}</small>}

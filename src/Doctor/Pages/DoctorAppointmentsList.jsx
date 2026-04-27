@@ -337,7 +337,7 @@ function DoctorAppointmentsList() {
                                                             </td>
                                                             <td>
                                                                 <div className="d-flex align-items-centet gap-2">
-                                                                    <div className="dropdown">
+                                                                    <div className="dropdown position-static">
                                                                         <a
                                                                             href="javascript:void(0)"
                                                                             className="grid-dots-btn"

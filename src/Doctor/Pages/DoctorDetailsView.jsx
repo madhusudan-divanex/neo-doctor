@@ -45,6 +45,10 @@ function DoctorDetailsView() {
     const [selectedReport, setSelectedReport] = useState(null);
     const [labSearch, setLabSearch] = useState('')
     const [doctorLabAppointment, setDoctorLabAppointment] = useState()
+    const [selectedCategory, setSelectedCategory] = useState()
+    const [selectedSubCat, setSelectedSubCat] = useState([])
+    const [catAndSub, setCatAndSub] = useState([])
+    const [subCatOptions, setSubCatOptions] = useState([])
     const { profiles, user, isOwner, permissions } = useSelector(state => state.doctor)
     async function fetchAppointmentData() {
         setLoading(true)
@@ -230,7 +234,8 @@ function DoctorDetailsView() {
         e.preventDefault()
         const data = {
             doctorId: appointmentData?.doctorId?._id, patientId: appointmentData?.patientId?._id, appointmentId: params.id,
-            labTest: { lab: selectedLab,department:selectedDepartment, labTests: selectedTest }
+            // labTest: { lab: selectedLab, department: selectedDepartment, labTests: selectedTest }
+            labTest: { testCat: selectedCategory, subCat: selectedSubCat }
         }
         try {
             const result = await updateApiData('appointment/doctor/labtest', data)
@@ -279,6 +284,33 @@ function DoctorDetailsView() {
             }
         }
     }, [pastPresData]);
+
+    async function fetchTestAndSub() {
+        try {
+            const res = await getApiData('api/comman/test-category')
+            if (res.success) {
+                setCatAndSub(res.data)
+            }
+        } catch (error) {
+
+        }
+    }
+    useEffect(() => {
+        fetchTestAndSub()
+    }, [])
+    useEffect(() => {
+        if (selectedCategory) {
+            const selectedCat = catAndSub.find(
+                item => item._id === selectedCategory
+            );
+
+            const data = selectedCat?.subCat?.map(sub => ({
+                label: sub?.name,
+                value: sub?._id
+            })) || [];
+            setSubCatOptions(data)
+        }
+    }, [selectedCategory])
     const selectedLabOption = labOptions?.find(option => option.value === selectedLab) || null;
     const selectedTestOptions = testOptions?.filter(option => selectedTest.includes(option.value));
 
@@ -416,13 +448,11 @@ function DoctorDetailsView() {
                                                             <div className="d-flex align-items-center gap-2 flex-wrap mobile-doctor-appointment">
                                                                 {appointmentData?.status !== 'completed' &&
                                                                     <button className="progress-btn" onClick={() => appointmentAction('completed')}> <FontAwesomeIcon icon={faCheck} /> Mark as in Complete</button>}
-                                                                {appointmentData?.status=="approved" && !appointmentData?.labTest?.lab ?
-                                                                    <button className="thm-btn" data-bs-toggle="modal" data-bs-target="#add-Lab"> <BsPlusCircleFill /> Add Lab Test </button>
-                                                                    : (!doctorLabAppointment || doctorLabAppointment?.status == "pending") && <button className="thm-btn" onClick={() => {
-                                                                        // setSelectedLab(appointmentData?.labTest?.lab?._id)
-                                                                        // setSelectedDepartment(appointmentData?.labTest?.department)
-                                                                        // setSelectedTest(appointmentData?.labTest?.labTests?.map(t => t._id))
-                                                                    }} data-bs-toggle="modal" data-bs-target="#edit-Lab"> <BsPlusCircleFill /> Edit Lab Test </button>}
+                                                                {appointmentData?.status == "approved" && !appointmentData?.labTest?.testCat &&
+                                                                    <button className="thm-btn" data-bs-toggle="modal" data-bs-target="#add-Lab"> <BsPlusCircleFill /> Add Lab Test </button>}
+                                                                {/* : (!doctorLabAppointment || doctorLabAppointment?.status == "pending") && <button className="thm-btn" onClick={() => {
+                                                                       
+                                                                   }} data-bs-toggle="modal" data-bs-target="#edit-Lab"> <BsPlusCircleFill /> Edit Lab Test </button>} */}
                                                                 <Link to={`/add-prescriptions/${params.id}`} className="thm-btn"> <BsPlusCircleFill /> {appointmentData?.prescriptionId ? 'Edit' : 'Add'} Prescriptions</Link>
                                                             </div>
                                                         </div>
@@ -477,7 +507,7 @@ function DoctorDetailsView() {
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            {appointmentData?.labTest?.lab && <div className="">
+                                                            {/* {appointmentData?.labTest?.lab && <div className="">
                                                                 <div className="mb-3">
                                                                     <h4 className="first_para fz-20 fw-700 mb-0">Lab tests prescribed by the doctor</h4>
                                                                 </div>
@@ -517,6 +547,20 @@ function DoctorDetailsView() {
                                                                             </div>}
                                                                         </div>
                                                                     </div>)}
+                                                            </div>} */}
+                                                            {appointmentData?.labTest?.testCat && <div className="">
+                                                                <div className="mb-3">
+                                                                    <h4 className="first_para fz-20 fw-700 mb-0">Lab tests prescribed by the doctor</h4>
+                                                                </div>
+                                                                <div className="lab-parent-bx">
+                                                                    <div className="nw-presc-lab-bx">
+
+                                                                        <div className="appointment-info-details">
+                                                                            <h4 className="mb-0">{appointmentData?.labTest?.testCat?.name}</h4>
+                                                                            {appointmentData?.labTest?.subCat?.map(s => <p className="ms-2"> {s?.name}</p>)}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                             </div>}
                                                         </div>
 
@@ -1102,6 +1146,64 @@ function DoctorDetailsView() {
 
                                     <form onSubmit={handleTestSubmit}>
                                         <div className="custom-frm-bx">
+                                            <label htmlFor="">Test Category</label>
+                                            <select name="" id="" className="form-select" required value={selectedCategory}
+                                                onChange={(e) => setSelectedCategory(e.target.value)}>
+                                                <option value="">----Select----</option>
+                                                {catAndSub?.map((item, index) => (
+                                                    <option key={index} value={item._id} >{item.name}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        {subCatOptions?.length>0 && <div className="row">
+                                        <h6>Sub Category</h6>
+                                            {subCatOptions?.map((item, key) => (
+                                                <div className="col-lg-6" key={key}>
+                                                    <div className="form-check custom-check">
+                                                        <input
+                                                            type="checkbox"
+                                                            className="form-check-input"
+                                                            id={`sub-${key}`}
+                                                            value={item?.value}
+                                                            checked={selectedSubCat.includes(item.value)}
+                                                            onChange={(e) => {
+                                                                if (e.target.checked) {
+                                                                    setSelectedSubCat([...selectedSubCat, item.value]);
+                                                                } else {
+                                                                    setSelectedSubCat(
+                                                                        selectedSubCat.filter(id => id !== item.value)
+                                                                    );
+                                                                }
+                                                            }}
+                                                        />
+                                                        <label htmlFor={`sub-${key}`} className="form-check-label">
+                                                            {item?.label}
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>}
+                                        {subCatOptions?.length>1 &&<div className="form-check custom-check justify-content-end">
+                                            <input
+                                                type="checkbox"
+                                                className="form-check-input"
+                                                checked={
+                                                    subCatOptions.length > 0 &&
+                                                    selectedSubCat.length === subCatOptions.length
+                                                }
+                                                onChange={(e) => {
+                                                    if (e.target.checked) {
+                                                        const allIds = subCatOptions.map(item => item.value);
+                                                        setSelectedSubCat(allIds);
+                                                    } else {
+                                                        setSelectedSubCat([]);
+                                                    }
+                                                }}
+                                            />
+                                            <label className="form-check-label">Select All</label>
+                                        </div>}
+
+                                        {/* <div className="custom-frm-bx">
                                             <label htmlFor="">Select Lab</label>
                                             <div class="react-select-wrapper">
                                                 <Select
@@ -1164,7 +1266,7 @@ function DoctorDetailsView() {
                                             </div>
 
                                         </div>:
-                                        'No tests found for selected department')}
+                                        'No tests found for selected department')} */}
                                         <div className="mt-3">
                                             <button type="submit" className="nw-thm-btn w-100"
                                                 disabled={permissions?.addLabTest}> Submit</button>
@@ -1246,25 +1348,25 @@ function DoctorDetailsView() {
                                                 </select>
                                             </div> : 'No departments found'}
                                         {testOptions?.length > 0 ?
-                                        <div className="custom-frm-bx">
-                                            <label htmlFor="">Test Select</label>
-                                            <div class="select-wrapper">
-                                                <Select
-                                                    options={testOptions}
-                                                    isMulti
-                                                    required
-                                                    value={selectedTestOptions}
-                                                    name="testId"
-                                                    classNamePrefix="custom-select"
-                                                    placeholder="Select areas(s)"
-                                                    onChange={(options) => {
-                                                        setSelectedTest(options.map(opt => opt.value)); // ✅ array of IDs
-                                                    }}
-                                                />
-                                            </div>
+                                            <div className="custom-frm-bx">
+                                                <label htmlFor="">Test Select</label>
+                                                <div class="select-wrapper">
+                                                    <Select
+                                                        options={testOptions}
+                                                        isMulti
+                                                        required
+                                                        value={selectedTestOptions}
+                                                        name="testId"
+                                                        classNamePrefix="custom-select"
+                                                        placeholder="Select areas(s)"
+                                                        onChange={(options) => {
+                                                            setSelectedTest(options.map(opt => opt.value)); // ✅ array of IDs
+                                                        }}
+                                                    />
+                                                </div>
 
-                                        </div>:
-                                         'No tests found for selected department'}
+                                            </div> :
+                                            'No tests found for selected department'}
 
                                         <div className="mt-3">
                                             <button type="submit" className="nw-thm-btn w-100"

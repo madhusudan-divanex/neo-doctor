@@ -189,9 +189,9 @@ function LeftSidebar() {
                   }}
                   className={`nav-link nw-nav-links product-toggle ${isCertOpen ? "active-menu" : ""}`}
                 >
-                  <FontAwesomeIcon icon={faCertificate} /> Certificates
+                  <FontAwesomeIcon icon={faCertificate} color="#00b4b5"/> Certificates
                   <FontAwesomeIcon
-                    icon={faChevronRight}
+                    icon={faChevronRight} 
                     className={`ms-auto toggle-admin-icon ${isCertOpen ? "rotate" : ""}`}
                   />
                 </a>

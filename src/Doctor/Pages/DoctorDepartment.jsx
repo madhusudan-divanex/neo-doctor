@@ -29,7 +29,7 @@ function DoctorDepartments() {
     const [form, setForm] = useState({
         departmentName: "",
         userId,
-        headOfDepartment: "",
+        headOfDepartment: null,
         employees: [],
     });
 
@@ -77,7 +77,7 @@ function DoctorDepartments() {
                 document.getElementById("closeAdd").click();
                 setForm({
                     departmentName: "",
-                    headOfDepartment: "",
+                    headOfDepartment: null,
                     employees: [],
                 });
             } else {
@@ -94,7 +94,7 @@ function DoctorDepartments() {
         setForm({
             departmentName: dept.departmentName,
             type: dept.type,
-            headOfDepartment: dept.headOfDepartment?._id || "",
+            headOfDepartment: dept.headOfDepartment?._id || null,
             employees: (dept.employees || []).map(emp => ({
                 employeeId:
                     typeof emp.employeeId === "object"
@@ -296,8 +296,7 @@ function DoctorDepartments() {
                                             <div className="select-wrapper">
                                                 <select
                                                     className="form-select custom-select"
-                                                    value={form.headOfDepartment}
-                                                    required
+                                                    value={form.headOfDepartment}                                                    
                                                     onChange={(e) =>
                                                         setForm({ ...form, headOfDepartment: e.target.value })
                                                     }
@@ -477,7 +476,7 @@ function DoctorDepartments() {
                                                 <select
                                                     className="form-select custom-select"
                                                     value={form.headOfDepartment}
-                                                    required
+                                                    
                                                     onChange={(e) =>
                                                         setForm({ ...form, headOfDepartment: e.target.value })
                                                     }
