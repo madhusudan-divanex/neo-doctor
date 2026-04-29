@@ -4170,6 +4170,16 @@ input[type=number] {
   width: 80px;
   height: 80px;
 }
+.nw-chip-card {
+  position: absolute;
+  top: 30px;
+  left: 20px;
+  background-image: url(/doctorCardLogo.png);
+  background-repeat: no-repeat;
+  background-size: contain;
+  width: 80px;
+  height: 80px;
+}
 
 .add-patients-clients img {
   width: 100%;

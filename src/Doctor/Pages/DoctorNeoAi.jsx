@@ -34,6 +34,7 @@ function DoctorNeoAi() {
     const recordTimerRef = useRef(null);
     const [chatSessions, setChatSessions] = useState([]);
     const [activeChatId, setActiveChatId] = useState(null);
+    const skipFetchOnChatIdChange = useRef(false);
     async function fetchGeneralQuestions() {
         if (!question.trim()) return;
         setMyQuestions(prev => [
@@ -55,6 +56,7 @@ function DoctorNeoAi() {
         if (!activeChatId) {
             const res = await securePostData("api/comman/create-chat");
             chatSessionId = res.data?._id
+            skipFetchOnChatIdChange.current = true;
             setActiveChatId(res.data?._id)
         } else {
             chatSessionId = activeChatId
@@ -151,14 +153,24 @@ function DoctorNeoAi() {
 
     async function askQuestion(text = question) {
         if (!text.trim()) return;
-        setMyQuestions(prev => [...prev, { type: "user", question: text, chatSessionId: activeChatId }]);
+        setMyQuestions(prev => [...prev, { type: "user", question: text,  }]);
         setIsTyping(true);
         setQuestion("");
+        let chatSessionId
+        if (!activeChatId) {
+            const res = await securePostData("api/comman/create-chat");
+            chatSessionId = res.data?._id
+            skipFetchOnChatIdChange.current = true;
+            setActiveChatId(res.data?._id)
+        } else {
+            chatSessionId = activeChatId
+        }
         try {
+            
             const response = await securePostData(`api/comman/ask-question`, {
                 question: text,
                 userId,
-                chatSessionId: activeChatId
+                chatSessionId
 
             });
 
@@ -188,12 +200,16 @@ function DoctorNeoAi() {
 
     useEffect(() => {
         if (activeChatId) {
+            if (skipFetchOnChatIdChange.current) {
+                skipFetchOnChatIdChange.current = false;
+                return;
+            }
             fetchMyQuestions(activeChatId);
         }
     }, [activeChatId]);
     useEffect(() => {
         fetchChatSessions();
-    }, []);
+    }, [myQuestions]);
 
     async function fetchChatSessions() {
         setLoading(true)

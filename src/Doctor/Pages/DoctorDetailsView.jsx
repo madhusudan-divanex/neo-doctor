@@ -298,17 +298,19 @@ function DoctorDetailsView() {
     useEffect(() => {
         fetchTestAndSub()
     }, [])
-    useEffect(() => {
-        if (selectedCategory) {
-            const selectedCat = catAndSub.find(
-                item => item._id === selectedCategory
-            );
-
-            const data = selectedCat?.subCat?.map(sub => ({
-                label: sub?.name,
+    async function fetchSubCategory(id) {
+        const res = await getApiData(`api/comman/sub-test-category/${id}`)
+        if (res.success) {
+            const data = res?.data?.map(sub => ({
+                label: sub?.subCategory,
                 value: sub?._id
             })) || [];
             setSubCatOptions(data)
+        }
+    }
+    useEffect(() => {
+        if (selectedCategory) {
+            fetchSubCategory(selectedCategory)
         }
     }, [selectedCategory])
     const selectedLabOption = labOptions?.find(option => option.value === selectedLab) || null;
@@ -497,7 +499,7 @@ function DoctorDetailsView() {
                                                                 <div className="col-lg-12 mb-3">
                                                                     <div className="general-info-content">
                                                                         <h5>Fees</h5>
-                                                                        <p>${appointmentData?.fees} </p>
+                                                                        <p>₹ {appointmentData?.fees} </p>
                                                                     </div>
                                                                 </div>
                                                                 <div className="col-lg-6 mb-3">
@@ -557,7 +559,7 @@ function DoctorDetailsView() {
 
                                                                         <div className="appointment-info-details">
                                                                             <h4 className="mb-0">{appointmentData?.labTest?.testCat?.name}</h4>
-                                                                            {appointmentData?.labTest?.subCat?.map(s => <p className="ms-2"> {s?.name}</p>)}
+                                                                            {appointmentData?.labTest?.subCat?.map(s => <p className="ms-2"> {s?.subCategory}</p>)}
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -708,7 +710,7 @@ function DoctorDetailsView() {
                                                                                         <div className="col-lg-12 mb-3">
                                                                                             <div className="general-info-content">
                                                                                                 <h5>Fees</h5>
-                                                                                                <p>${item?.fees} </p>
+                                                                                                <p>₹ {item?.fees} </p>
                                                                                             </div>
                                                                                         </div>
                                                                                         <div className="col-lg-6 mb-3">
@@ -1155,8 +1157,8 @@ function DoctorDetailsView() {
                                                 ))}
                                             </select>
                                         </div>
-                                        {subCatOptions?.length>0 && <div className="row">
-                                        <h6>Sub Category</h6>
+                                        {subCatOptions?.length > 0 && <div className="row">
+                                            <h6>Sub Category</h6>
                                             {subCatOptions?.map((item, key) => (
                                                 <div className="col-lg-6" key={key}>
                                                     <div className="form-check custom-check">
@@ -1183,7 +1185,7 @@ function DoctorDetailsView() {
                                                 </div>
                                             ))}
                                         </div>}
-                                        {subCatOptions?.length>1 &&<div className="form-check custom-check justify-content-end">
+                                        {subCatOptions?.length > 1 && <div className="form-check custom-check justify-content-end">
                                             <input
                                                 type="checkbox"
                                                 className="form-check-input"

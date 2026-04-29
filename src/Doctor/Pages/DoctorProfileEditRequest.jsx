@@ -11,6 +11,7 @@ import { Modal } from "bootstrap"
 import Loader from "../../Loader/Loader"
 import { Link } from "react-router-dom"
 import { QRCodeCanvas } from "qrcode.react"
+import { BriefcaseMedical } from "lucide-react"
 
 function DoctorProfileEditRequest() {
     const dispatch = useDispatch()
@@ -69,7 +70,7 @@ function DoctorProfileEditRequest() {
 
                                     <Link to='/edit-profile' className="nw-thm-btn outline" > <FontAwesomeIcon icon={faEdit} /> Edit now</Link>
                                 </div>}
-                               
+
                         </div>
                     </div>
                     <div className="all-profile-data-bx">
@@ -125,8 +126,8 @@ function DoctorProfileEditRequest() {
                                         <img src="/hospital.svg" alt="" />
                                         <h5>{aboutDoctor?.hospitalName}</h5>
                                     </div>
-                                    <div className="row align-items-center justify-content-between">
-                                        <div className="col-lg-6 col-md-6 col-sm-12 mb-3">
+                                    <div className="d-flex align-items-center justify-content-between">
+                                        <div className=" mb-3">
                                             <div className="row">
 
 
@@ -156,20 +157,24 @@ function DoctorProfileEditRequest() {
                                             </div>
 
                                         </div>
-                                        <div className="col-lg-6 col-md-6 col-sm-12  mb-3">
+                                        <div className="  mb-3">
                                             <div className="add-patients-clients premium-crd-details" >
-                                               
-                                                <img src="/DoctorNeoCard.png" alt="" />
+                                                <div className="nw-chip-card">
+                                                    {/* <BriefcaseMedical color="#fff" size={50} /> */}
+                                                </div>
+                                                <img src="/NeoCard.png" alt="" />
                                                 <div className="patient-card-details">
-                                                    <h4 className="text-white">{profiles?.name?.length > 13 ? profiles?.name?.slice(0, 13) :
+                                                    <h4 className="text-white">{profiles?.name?.length > 17 ? profiles?.name?.slice(0, 14) + '...' :
                                                         profiles?.name}</h4>
-                                                    <p className="text-white">Doctor ID</p>
+                                                    {/* <p className="text-white">Doctor ID</p> */}
                                                     <h6 className="text-white">{user?.nh12}</h6>
                                                 </div>
                                                 <div className="qr-code-generate">
                                                     <QRCodeCanvas
-                                                        value={userId}
+                                                        value={`https://neohealthcard.com/user/${user?.nh12}`}
                                                         size={256}
+                                                        bgColor="transparent"
+                                                        fgColor="#ffffff"
                                                         className="qr-code"
                                                         style={{ height: "auto", maxWidth: "100%", width: "100%" }}
                                                     />
@@ -395,7 +400,7 @@ function DoctorProfileEditRequest() {
 
 
             <div className="text-end mt-4">
-                 <Link to={-1} className="nw-thm-btn outline">Go Back</Link>
+                <Link to={-1} className="nw-thm-btn outline">Go Back</Link>
             </div>
 
 
